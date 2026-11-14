@@ -1,1 +1,42 @@
+import json
 
+# Data structure containing plant types, base KG, and allowed mutations
+plant_data = {
+    "Peashooter": {"base_kg": 1, "mutations": ["Normal", "Golden", "Void"]},
+    "Sunflower": {"base_kg": 1, "mutations": ["Normal", "Solar", "Radiant"]},
+    "Wall-nut": {"base_kg": 2, "mutations": ["Normal", "Iron", "Obsidian"]},
+    "Potato Mine": {"base_kg": 1, "mutations": ["Normal", "Explosive", "Nuclear"]},
+    "Cherry Bomb": {"base_kg": 3, "mutations": ["Normal", "Magma", "Supernova"]},
+}
+
+def generate_plant(name, kg, mutation):
+    """Generates a plant object with validation to ensure it matches game rules."""
+    if name not in plant_data:
+        raise ValueError(f"Plant type not found: {name}")
+    
+    allowed_mutations = plant_data[name]["mutations"]
+    if mutation not in allowed_mutations:
+        print(f"Warning: Invalid mutation '{mutation}' for '{name}'. Defaulting to Normal.")
+        mutation = "Normal"
+
+    return {
+        "name": name,
+        "kg": kg,
+        "mutation": mutation,
+        "id": f"{name.replace(' ', '')}_{kg}_{mutation.lower()}"
+    }
+
+def run_simulation():
+    """Simulates the generation of every KG and mutation combination."""
+    print("--- Starting Plant Generation ---")
+    for plant_name, data in plant_data.items():
+        print(f"Generating variations for: {plant_name}")
+        # Simulates KG levels 1 through 5
+        for kg in range(1, 6):
+            for mutation in data["mutations"]:
+                new_plant = generate_plant(plant_name, kg, mutation)
+                print(f"[SUCCESS] Created: {new_plant['name']} | KG: {new_plant['kg']} | Mutation: {new_plant['mutation']} | ID: {new_plant['id']}")
+    print("--- Generation Complete ---")
+
+if __name__ == "__main__":
+    run_simulation()
