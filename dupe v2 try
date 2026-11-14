@@ -1,1 +1,130 @@
+-- Plants vs Brainrots: Duplication Tool
+-- Designed for Xeno environment
 
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "PlantDupeTool"
+screenGui.ResetOnSpawn = false
+
+-- Attempt to parent to CoreGui for executor-style persistence, fallback to PlayerGui
+local success, err = pcall(function()
+    screenGui.Parent = CoreGui
+end)
+if not success then
+    screenGui.Parent = player:WaitForChild("PlayerGui")
+end
+
+-- UI Constants (Design System)
+local COLORS = {
+    BACKGROUND = Color3.fromRGB(32, 32, 32),
+    ACCENT = Color3.fromRGB(200, 200, 200), -- Neutral light accent
+    TEXT = Color3.fromRGB(240, 240, 240),
+    BORDER = Color3.fromRGB(60, 60, 60),
+    HOVER = Color3.fromRGB(45, 45, 45),
+    PRESSED = Color3.fromRGB(20, 20, 20)
+}
+
+local FONT = Enum.Font.Gotham -- Clean, modern font
+
+-- Main Frame
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.Size = UDim2.new(0, 200, 0, 100)
+mainFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+mainFrame.BackgroundColor3 = COLORS.BACKGROUND
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true 
+mainFrame.Parent = screenGui
+
+local uiCorner = Instance.new("UICorner")
+uiCorner.CornerRadius = UDim.new(0, 4)
+uiCorner.Parent = mainFrame
+
+local uiStroke = Instance.new("UIStroke")
+uiStroke.Color = COLORS.BORDER
+uiStroke.Thickness = 1
+uiStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+uiStroke.Parent = mainFrame
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "Plant Duplicator"
+title.TextColor3 = COLORS.TEXT
+title.TextSize = 14
+title.Font = FONT
+title.Parent = mainFrame
+
+-- Dupe Button
+local dupeButton = Instance.new("TextButton")
+dupeButton.Name = "DupeButton"
+dupeButton.Size = UDim2.new(0, 160, 0, 36)
+dupeButton.Position = UDim2.new(0.5, -80, 0, 45)
+dupeButton.BackgroundColor3 = COLORS.HOVER
+dupeButton.BorderSizePixel = 0
+dupeButton.Text = "Duplicate Plants"
+dupeButton.TextColor3 = COLORS.TEXT
+dupeButton.TextSize = 14
+dupeButton.Font = FONT
+dupeButton.AutoButtonColor = false 
+dupeButton.Parent = mainFrame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 4)
+btnCorner.Parent = dupeButton
+
+local btnStroke = Instance.new("UIStroke")
+btnStroke.Color = COLORS.BORDER
+btnStroke.Thickness = 1
+btnStroke.Parent = dupeButton
+
+-- Logic Implementation
+local function performDuplication()
+    print("[Duplicator] Executing duplication sequence...")
+    -- Insert your actual game remote calls here
+    
+    dupeButton.Text = "Processing..."
+    task.wait(0.5)
+    dupeButton.Text = "Success!"
+    task.wait(1)
+    dupeButton.Text = "Duplicate Plants"
+end
+
+-- Button Interactions
+dupeButton.MouseEnter:Connect(function()
+    TweenService:Create(dupeButton, TweenInfo.new(0.2), {BackgroundColor3 = COLORS.ACCENT}):Play()
+    TweenService:Create(dupeButton.TextColor3, TweenInfo.new(0.2), {TextColor3 = COLORS.BACKGROUND}):Play()
+end)
+
+dupeButton.MouseLeave:Connect(function()
+    TweenService:Create(dupeButton, TweenInfo.new(0.2), {BackgroundColor3 = COLORS.HOVER}):Play()
+    TweenService:Create(dupeButton.TextColor3, TweenInfo.new(0.2), {TextColor3 = COLORS.TEXT}):Play()
+end)
+
+dupeButton.MouseButton1Down:Connect(function()
+    dupeButton.BackgroundColor3 = COLORS.PRESSED
+    performDuplication()
+end)
+
+-- Close Button
+local closeButton = Instance.new("TextButton")
+closeButton.Size = UDim2.new(0, 24, 0, 24)
+closeButton.Position = UDim2.new(1, -28, 0, 4)
+closeButton.BackgroundTransparency = 1
+closeButton.Text = "×"
+closeButton.TextColor3 = COLORS.TEXT
+closeButton.TextSize = 20
+closeButton.Font = FONT
+closeButton.Parent = mainFrame
+
+closeButton.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+print("[Duplicator] Script loaded successfully.")
